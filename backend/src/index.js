@@ -3,12 +3,12 @@ import dotenv from "dotenv";
 import { connectDB } from "./lib/db.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import path from "path";
 
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
 import { app, server } from "./lib/socket.js";
 
-import path from "path";
 
 dotenv.config();
 
@@ -24,11 +24,16 @@ app.use(
   })
 );
 
+console.log("ROUTES INITIALIZED");
+
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
 if (process.env.NODE_ENV === "production") {
+  console.log("PRODUCTION STATIC FILE SETUP STARTED");
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+  console.log("Catch-all route initialized");
 
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
